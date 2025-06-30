@@ -53,6 +53,7 @@ This exercise helped me to see how misleading low upfront costs can be and how e
 
 #### Challenge 1
 For this challenge, I ran a quick test using the command `ping [website]` on a few websites to check their latency:  google.com, gov.sg, bbc.co.uk, sydney.edu.au, mit.edu, japan.go.jp. I chose these because I wanted to see how the physical distance between where I am  (Singapore) and where their websites' servers are likely located will affect how fast they respond.
+
 ![alt text](<img/ping .png>)
 As expected, the fastest connections were from Singapore and Japan. Google was also really fast as they have servers in Singapore. The slowest turned out to be from sydney.edu.au, which was expected due to the physical distance from Singapore. 
 
@@ -99,3 +100,32 @@ The final part of the lab, I worked on a system monitoring script called `resour
 This part of the script showed me how automation can be used to simplify monitoring tasks that could get mundane over time. Instead of manually running and using multiple commands, this script runs them all at once and displays it like a snapshot which can be very useful for admins or users who are managing servers. There are different ways I can see Bash scripting helping me in my future tasks. For example:
 - `Automated Backups`: I could write a script to compress and copy important files weekly.
 - `Scheduled system cleanups`: Automatically removing old temp files or freeing up disk space.
+
+## Day 3: DNS, Certificates, and Automation
+
+For today's lab activities, it was all about securing our web server with HTTPS using a free SSL certificate that I obtained from Let's Encrypt. Having a proper domain name with the secure padlock beside it made it feel legit. That is because I went from typing in the IP address of the server to a real website and url that was also secured.
+
+#### 3a-1 Domain, DNS and TLS Certificates
+
+Before I started working on getting the SSL certificate and turning my HTTP into HTTPS, I had to sort out the domain name. The few options listed in the lab required me to pay or input my credit card. Unwilling to do so, I sourced out other options I could use. At first I tried the Freenom and Dot.tk - but they kept throwing errors or just wouldn't load at all. I also tried applying for a GitHub Student Developer Pack as it provides free domain for up to a year, but that needed to be verified first. Eventually, I decided to go with DuckDNS, which was very simple to set up. I created the domain `iseabrdg.duckdns.org` and updated the IP address to point to my EC2 instance.
+
+![alt text](img/duckdns.png)
+
+One small issue I ran into was that when I tried to open the domain in the browser, it didn't load immediately. I instantly thought that I had made a mistake. To double confirm that the domain was working, I used the `curl` command `(curl iseabrdg.duckdns.org)` as well as to `nslookup iseabrdg.duckdns.org` to confirm that the site was actually reachable. After a minute or two of constant reloading, to my relief the website started working. 
+
+![alt text](img/curl.png)
+
+#### 3a-2 Enabling HTTPS with Let's Encrypt & Certbot
+
+Once I had the domain pointing to my server and confirmed that it was accessible and running, I installed Certbot using the command `sudo apt install certbot python3-certbot-apache -y`. Once it was installed, I ran the command `sudo certbot --apache -d iseabrdg.duckdns.org`. The process of getting the SSL certificate was very smooth. It asked me a few questions and immediately after that, it had successfully deployed a certificate for my domain. I refreshed the page in my browser and was pleased to see that my domain had a padlock icon next to the URL which meant that the HTTPS certificate was live.
+
+![alt text](img/encrypt.png)
+![alt text](img/secure.png)
+
+I also ran a dry-run renewal test using the command `sudo certbot renew --dry-run` just to see how the auto-renewal would work if I ever wanted to renew the SSL certificate.
+
+![alt text](img/dryrun.png)
+
+From this lab activity, I have learnt that HTTPS is a must-have in this time and age, even for the most basic websites. Having your domain secured builds trust in the users that would use your website. I also enjoyed being able to use Let's Encrypt as it made obtaining SSL certificates super accessible. It is nice that it is free and renews automatically. I also learnt that having proper set up for both my EC2 and my DNS was crucial as it caused a small delay in my lab activities. With more hands-on work, I know it will be like second nature to me once I build more confidence. 
+
+I can see myself using this setup again if I ever deployed a portfolio or a web project. Currently, all of my projects and portfolio are using Netlify or GitHub Pages. It would be nice to have my own domain and having it SSL certified. 
