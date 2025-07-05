@@ -129,3 +129,23 @@ I also ran a dry-run renewal test using the command `sudo certbot renew --dry-ru
 From this lab activity, I have learnt that HTTPS is a must-have in this time and age, even for the most basic websites. Having your domain secured builds trust in the users that would use your website. I also enjoyed being able to use Let's Encrypt as it made obtaining SSL certificates super accessible. It is nice that it is free and renews automatically. I also learnt that having proper set up for both my EC2 and my DNS was crucial as it caused a small delay in my lab activities. With more hands-on work, I know it will be like second nature to me once I build more confidence. 
 
 I can see myself using this setup again if I ever deployed a portfolio or a web project. Currently, all of my projects and portfolio are using Netlify or GitHub Pages. It would be nice to have my own domain and having it SSL certified. 
+
+#### 3b
+
+![alt text](img/calculation.png)
+![alt text](img/sum.png)
+![alt text](img/sumcode.png)
+![alt text](img/touchfiles.png)
+![alt text](img/backupcode.png)
+![alt text](img/backuperror.png)
+![alt text](img/backuperror2.png)
+![alt text](img/backuperror3.png)
+![alt text](img/backupsuccess.png)
+![alt text](img/zipissue.png)
+![alt text](img/backupsuccess2.png)
+![alt text](img/backupsuccesscode2.png)
+![alt text](img/cron1min.png)
+![alt text](img/codevariablesenhancement.png)
+![alt text](img/backupincloud.png)
+![alt text](img/reboot.png)
+![alt text](img/figlet.png)
