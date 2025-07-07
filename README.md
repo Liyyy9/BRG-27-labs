@@ -296,7 +296,7 @@ I then made the script globally accessible by moving it to `/usr/bin` and tested
 ![alt text](img/cron1min.png)
 
 The next step was to export the backup to a remote cloud server using `scp`. I had to first `scp` the `webserver-key.pem` file from my local into the VM. Once I had that, I connected into my EC2 instance to backup the file into it. I tested it and it was successful. 
-
+![alt text](image.png)
 ![alt text](img/backupincloud.png)
 
 The most frustrating challenge was gettign the backup script to run after reboot. Every time I rebooted my VM, it would reset everything and delete my files and scripts. I eventually realized it was because I hadn't properly installed Ubuntu on the virtual hard disk and that I was actually booting into a new live session each time I powered on my VM. After installing and configuring the VM properly and three failed attempts later, I tested the `@reboot` cron job and it finally worked as expected. 
