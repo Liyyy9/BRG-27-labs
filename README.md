@@ -291,7 +291,7 @@ After that, I took my time to enhance the script by adding more variables such a
 
 ![alt text](img/codevariablesenhancement.png)
 
-I then made the script globally accessible by moving it to `/usr/bin` and tested it using just `testscript` from anywhere in the terminal. I then set up a cron job using `sudo crontab -e` to run the script every hour. For testing purposes, I had scheduled it to run every minute just to make sure that the automation was working correctly.
+I then made the script globally accessible by moving it to `/usr/bin` and tested it using just `testscript` from anywhere in the terminal. I then set up a cron job using `sudo nano /etc/crontab` to run the script every hour. For testing purposes, I had scheduled it to run every minute just to make sure that the automation was working correctly.
 
 ![alt text](img/cron1min.png)
 
