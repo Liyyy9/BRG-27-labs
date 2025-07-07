@@ -1,11 +1,11 @@
 # BRG-27-labs
 ## Day 1: Setting Up and Exploring Linux
+### 1a-1 Virtualisation and Linux Setup
+On the first day of class, I was a bit nervous as I've never learned in depth about servers and virtual machines (VM) or even worked with Linux before. I already had a GitHub account prior to class starting. During the introduction Mr. Yatim gave about servers and VMs and how it worked as well as all the buzz words used, I found myself overwhelmed with the sheer number of things I had no knowledge on. Slowly, with more explanation from Mr. Yatim, I was able to understand more about the things he was talking about. Of course, there are still a bunch of things that I will need to read up on and learn but I know that with the resources he had provided, I will be able to gain the knowledge to learn everything I can.
 
-On the first day of class, I was a bit nervous as I've never learned in depth about servers and virtual machines (VM) or even worked with Linux before. I already had a GitHub account prior to class starting. During the introduction Mr. Yatim gave about servers and VMs and how it worked as well as all the buzz words used, I found myself overwhelmed with the sheer amount of things I had no knowlegde on. Slowly, with more explanation from Mr. Yatim, I was able to understand more about the things he was talking about. Of course, there are still a bunch of things that I will need to read up on and learn but I know that with the resources he had provided, I will be able to gain the knowlege to learn everything I can.
+Setting up VMware, VirtualBox and downloading Ubuntu was also a struggle as I kept hitting errors. From being prompted about missing dependencies, to struggling with the downloading of VMware, and the nail in the coffin, unable to run the VM once everything was downloaded. It required me to update my BIOS to enable AMD-V, something I've never done or even heard of. A quick Google search later, I was finally able to run my VM.
 
-Setting up VMware, VirtualBox and downloading Ubuntu was also a struggle as I kept hitting errors. From being prompted about missing dependencies, to struggling with the downloading of VMware, and the the nail in the coffin, unable to run the VM once everything was downloaded. It required me to update my BIOS to enable AMD-V, something I've never done or even heard of. A quick Google search later, I was finally able to run my VM.
-
-### Lab - Familiarity with Ubuntu Linux
+### 1a-2 Ubuntu Desktop and Command Line Familiarisation
 ![ls and ls -la difference](img/ls.png) I can see that when I write the command `ls`, it is showing just the main files without any hidden files. However, the command `ls -la` shows all the files including the hidden files in the directory. I found out that `-l` actually stands for long format which is why it is showing extra details such as size, modification time etc.
 
 There are some differences I can see while testing `gedit` and `nano`. For `gedit`, it is a graphical text editor that opens up another interface that looked similar to Notepad on Windows while `nano` was entirely done in the terminal itself. Using `gedit` also required me to install a few things to run it such as `gnome-46-2404` and `gedit`.
@@ -17,24 +17,150 @@ Next, I followed the steps to learn how to use the hosts files to add IP address
 
 The last thing that I saw a big difference in is when I ran the command `less hello_world.c` and `less hello_world_executable`.<br/>![addng](img/code.png) For `hello_world.c`, I can read the actual C source code. It's interesting to see how the computer reads our source code after it has been compiled into binary. I used to think that it's just reading our code, line by line, but I failed to realise that compiling my code would turn it into something totally unreadable by me. ![addng](img/binary.png)
 
-### Lab - Linux Services
-Working with two virtual machines for this portion of the lab. During the portion where I had to enable the Ubuntu Firewall (UFW) on one of the clone, it was interesting to see that the difference in the output after it had been enabled. Initially, I was able to see the open ports on the first clone without any issue. However, after enabling the UFW, the firewall was immediately blocking the ping requests from the second clone.
-![enable](img/enable.png) ![alt text](img/nmap.png)
+### 1b-1 Linux Services, SSH, Firewalls & Compression.
+#### Apache Web Server
+In this lab, I installed Apache2 web server into my VM. I began by updating the package list with `sudo apt update` and then installed Apache using `sudo install apache2`. Once I had installed it, I used `ip a` to find out my IP address so that I can visit it on my local browser which would display the default web page.
+![alt text](img/apache.png)
 
+Once I have confirmed that it was working, I used the command `sudo nano /var/www/html/index.html` to edit the html so that the web page would look different. Initially, I had forgotten to add `sudo` which resulted in a "Permission denied" error. This is because there is no write access for regular users. Using `sudo` gives me extra permissions thatt I need to modify protected files.
+
+![alt text](img/apache2.png)
+
+#### UFW
+During this activity, I worked with two virtual machines. Using the command `sudo ufw status verbose`, I ensured that the Ubuntu firewall (UFW) was inactive in VM1. When I used `nmap` in VM2 to scan VM1, it listed all the open ports.
+
+![alt text](img/ufwinactive.png)
+
+However, once I ran `sudo ufw enable` in VM1, I immediately noticed a change in the response given by VM2. It was interesting to see how VM2 could no longer ping VM1 and the nmap scans no longer returned the same port information as it did before. Proving to me that UFW was blocking any requests.
+
+![alt text](img/ufwenabled.png)
+
+Afterwards, I enabled just port 80 using the command `sudo ufw allow 80/tcp`. This time, when I ran nmap in VM2 again, port 90 appeared as open.
+
+![alt text](img/ufw80.png)
+
+Although I didn't have a lot of trouble in this activity, it was interesting to see how firewalls like UFW operates. At first, with the UFW inactive, my VM2 could easily nmap the first and see all the open ports. Once enabling UFW, the ping stopped working and nmap could no longer detect any of the open ports. This gave me a solid way to test and understand how UFW manages traffic between systems.
+
+#### SSH
+In this activity, I continued learning more about SSH(Secure Shell) and how to use it to access into other machines remotely. SSH allows me to log into another computer (in this case VM2) via the command line. I first tried to log into my VM2 using the `ssh 192.168.157.128` command, but it didn't work right away. After troubleshooting, I realised it was because I had activated my UFW which was blocking port 22. Once I disabled the UFW, I was able to successfully establish ssh connection and gain access to my VM2.
+
+The next task was to learn more about user management in Linux. I used the command `less /etc/passwd` to list all user accounts in the system. Before I added a new user, I could see the current ubuntu user that I had set up in my VM2.
+
+![alt text](img/adduser.png)
+
+By adding a new user with `sudo adduser newuser`, I was able to set up the new account and see how Linux handles new user accounts.
+
+![alt text](img/adduser2.png)
+
+When I used `less /etc/passwd` once more, I noticed a new entry for the user I had created, which confirmed that the account was added properly.
+
+![alt text](img/adduser3.png)
+
+Through these tasks, I got more hands-on experience with managing users and troubleshooting network access via ssh. It also showed me how firewalls can impact remote access and how it is important to configure it correctly.
+
+#### Dealing with compressed archives
+In this activity, I worked with compressed archives in Linux, an important skill when managing files on a server. The first task was to download three public domain books from Gutenberg using `wget` command. 
+![alt text](img/wget.png)
+
+After fetching the files, I used `mkdir books` to create a new books directory before using the `mv` command to move the downloaded files into this directory. Once the files were moved into the new directory, I compressed them using the `tar` command which I had found out meant a `tarball`. Using the options `cf` meant that it was telling `tar` to create a new archive file and to specify the name of the archive file that was to be created. I then tried to use `bzip2` to compress the tarball further but I ran into an issue since `bzip2` wasn't installed. Thankfully, the error message printed made it easier to find out I needed to install in. This taught me that reading and understanding error messages would help guide me to finding a solution even if it was the most straightforward issue.
+
+![alt text](img/wget2.png)
+
+After installing and compressing the archive into `books.tar.bz2`. Instead of using `ls -la`, I used `ls -lah` as the `-f` flag shows human-readable file sizes, which makes it easier for me to compare the file sizes before and after compression.
+
+![alt text](img/wget3.png)
+
+Finally, I decompressed the archive using `bunzip2` and extracted the files with `tar -xvf`. It was a simple but useful exercise in understanding how compression and decompression works in Linux by only using the terminal.
+
+![alt text](img/wget4.png)
+
+### Extension Tasks
 #### Challenge 1
 >Can you ssh into your neighbour's machine? Once you have logged into your neighbour's machine, see if you can create a text file on their desktop saying Hi_[neighborsname]
 
-I first started by logging into my clone VM bt using `ssh [ip_address]`. It prompted me for the password before it allowed me to log in.
+I first started by logging into my VM2 by using `ssh [ip_address]`. It prompted me for the password before it allowed me to log in.
 ![login](img/login.png)
 
 And then with a quick command of `touch hi_vm1.txt`, I have successfully created a new text file in my first clone! ![txt](img/txt.png)
 
 #### Challenge 2
+For this challenge, I was successful in launching a `gedit` while ssh'ed into my second VM(VM2). At first, I had assumed that the GUI would appear in VM2. Instead, it was displayed on my VM1 that initiated the ssh session. Although confused at first, I slowly understood what was happening. Even though the program was running on VM2, the GUI window was displayed on VM1 because that was where I was actually working and remotely viewing the session. Basically, I was controlling VM2 remotely but seeing and interacting with it through my own screen which was VM1. 
+![alt text](img/geditvm1.png)
 
 #### Challenge 3
-STRUGGLING! A WHOLE LOT.
+During this challenge, I attempted to use the `scp` (secure copy) command to transfer a file from my VM1 to my VM2. The command I used was `scp /home/ubuntu/testscp ubuntu@192.168.157.129:/home/ubuntu`. However, I encountered an error:
+![alt text](img/scperror.png)
+
+After researching, I found out that my `/etc/ssh/sshd_config` was missing the line `Subsystem sftp /usr/lib/openssh/sftp-server`. I also learned that `scp`uses `SFTP` (SSH File Transfer Protocol) for file transfer operations. `SSH` provides the secure channel while `SFTP` is the specific protocol that handles the file transfer requests. Therefore, to successfully use `scp`, I need to have both `ssh` and `sftp`.
+
+To fix this issue, I ssh'ed directly into VM2 using `ssh ubuntu@192.168.157.129`. Once I was inside, I could check the ssh daemon configuration by using `sudo nano /etc/ssh/sshd_config` to add in the line `Subsystem sftp /usr/lib/openssh/sftp-server` that would enable the sftp subsystem.
+
+![alt text](img/scpnano.png)
+
+Once I have added the missing line, I restarted the ssh service using `sudo systemctl restart ssh`. This time, I was able to file transfer from VM1 to VM2 without any errors.
+
+![scp](img/scp.png)
 
 #### Challenge 4
+Making use of the new found knowledge on `scp`, I created a text file with all the `wget` links for the top ten books on Gutenburg. This makes it easier for me as I don't have to type out the entire link manually. I ran into an issue where they said someone could be eavesdropping - which has happened to me a few times before this. The first time it had happened, it scared me as I genuinely thought I was getting hacked. However, I have come to learn that it just meant that the saved SSH key fingerprint no longer matched the current server's key. Using the command `ssh-keygen -R` helps to remove the old key from my local `known_hosts` file. Once that was done, I was successful with copying the file from my local to my VM.
+
+![alt text](img/bookslinkscp.png)
+
+After successfully downloading all ten books, I made sure to verify that they were all in my directory. I find that it's important for me to double check in my file explorer as it is a visual confirmation that everything went smoothly.
+![alt text](img/gutenbergbooks10.png)
+
+I grouped it all into a directory called `top10`. I used `mkdir` and `mv` to move the downloaded `.txt` files into it. This helps to keep everything organised and also makes it easier to compress everything in one go.
+
+![alt text](img/top10.png)
+
+
+Next, I archived the folder with `tar` and compressed it using `bzip2`. This was a good opportunity for me to practice what I had previously learnt in the previous activities.
+
+![alt text](img/top10books.png)
+
+For my last step of the challenge, I had to use `scp` to transfer the archive to my VM2. Everything had been going smoothly this whole time and so when I hit my second roadblock for this challenge, I couldn't help but feel a little disappointed. However, I noticed the error message `subsystem request failed on channel 0`, an error message that I had faced before. My first instinct was to go onto my VM2 to check if I had my `ssh` running. Once I verified that it was active, I checked my `/etc/ssh/sshd_config/` to make sure that the sftp subsystem had been enabled as well. Unsurprisingly, it was already enabled as I had added it in during a previous activity. I then figured that it could be the UFW that might be enabled and blocking. However, that too was inactive. 
+
+By now, I knew that it wasn't my ssh, sftp or my ufw. I decided to recheck the syntax of my command, knowing that I could have easily made a mistake there. The command I had wrote was: `scp /top10/top10books.tar.bz2 ubuntu@192.168.157.129:/home/ubuntu`. I didn't see the error at first even as it was staring right at me. To troubleshoot this, I tried to `ls -lh top10/top10books.tar.bz2` and I got `/top10/top10books.tar.bz2: No file or directory`, which got me stressing because I can see the file in my file explorer. Breaking it down into smaller steps, I tried just `ls` and I could see `top10` listed. Then I tried `ls -lh /top10`, same error. That's when I realised that the error was so simple. I should have been using `top10` instead of `/top10` since it was a directory. Shaking my head, I removed the simple yet offending / and it worked instantly.
+
+![alt text](img/scptop10.png)
+
+This activity taught me a lot. It added to my knowledge that I had gained in the previous activities, giving me more confidence in using the commands. However, it also taught me that sometimes the errors could be caused by the smallest things and that I should always check the syntax first.
+
+### 1b-2 Linux File Permissions and Group Access Control
+Before starting this activity, I only understood file permissions in Linux on a suface level. I didn't realize just how important group ownership and permission structure could be but this activity gave me hands-on experience managing access between multiple users.
+
+I started by creating three users: Alice, Bob, and Mallory using `sudo adduser`.
+![alt text](img/adduserpermissions.png)
+
+Next, I created a `shared` directory in `/home` and used `touch` to create the ten blank files and listed them with `ls -l` to confirm that they were created successfully.
+![alt text](mkdir.png)
+
+I then created a group called `awesomegroup` and added Alice and Bob to it using `usermod`. The reason why I didn't add Mallory to the group was because I didn't want her to have any access to the `shared` directory.
+
+![alt text](img/addusersgroup.png)
+
+At first, Alice was not able to access the directory or create any files. I realised that it was because I hadn't changed ownership to her and that the root was still the owner of the directory. I used `chown -R alice:awesomegroup /home/shared` to change the owner to Alice and the group to `awesomegroup`. I then set the correct permissions with `chmod -R 750`, which meant that the owner of the group (Alice) would be able to read, write and execute, the group members (Bob) would be able to read and execute, and the others (Mallory) wouldn't be able to do any of those.
+
+![alt text](img/permissions.png)
+
+With the correct permissions set, I had to check it. I logged into Alice's account with `su - alice -s /bin/bash/` to check. Thankfully, Alice was able to `cd` into the folder, view the files and she was even able to `touch` a new file called `testfile`. Originally when I first tried this activity, I had left the ownership to `ubuntu:ubuntu` which meant that Alice didn't have the permissions she was supposed to have. I had to restart this activity multiple times before I was finally able to get Alice the correct permissions she was supposed to have.
+
+![alt text](img/alice.png)
+
+After testing Alice, I went on to test if Bob had the correct permissions. As expected, he could read and execute files but couldn't create anything new in the folder as he did not have the write permission given to him.
+
+![alt text](img/bob.png)
+
+Since Mallory wasn't in the group, she couldn't even `cd` into the directory, which was the expected behaviour since non-group members did not have any permissions given to them.
+
+![alt text](img/mallory.png)
+
+One of the biggest issues I face during this activity was working in the wrong path. I kept creating files inside of `/home/ubuntu` instead of `/home` which caused a lot of confusion as the directory or files couldn't be found when I was switching between the different users to check their permissions. Creating sucha small but fatal mistake at the very start, forced me to restart the activity multiple times.
+
+#### Challenge
+For this challenge, I added Mallory to the `sudoers` group. Once she was added, she was able to run all the commands to read, write and execute in the shared directory despite the fact that her normal access was blocked. 
+
+![alt text](img/mallory2.png)
 
 ## Day 2: Services, Cost, and Scripting
 
@@ -130,22 +256,54 @@ From this lab activity, I have learnt that HTTPS is a must-have in this time and
 
 I can see myself using this setup again if I ever deployed a portfolio or a web project. Currently, all of my projects and portfolio are using Netlify or GitHub Pages. It would be nice to have my own domain and having it SSL certified. 
 
-#### 3b
+#### 3b-1 Bash Backup Scripting, Cron Jobs & Cloud Export
+
+This was by far the most frustrating and hardest activity in this module. Before this activity, I only had a surface level understanding of Bash scripting and nothing at all about cron jobs. Although I knew that it was possible to automate tasks in Linux, I never really had the chance to explore it. This activity helped me see how scripting, automation and remote file transfer can all work together in a practical system especially when it comes to backups. Even though I struggled a lot, I felt really proud being able to build a system from scratch that could run on it's own and even survive a reboot.
+
+I started with a simple `helloworld.sh` that had a `for` loop inside to `echo $i` from 0 to 9. From there, I modified the code to calculate to calculate the sum of numbers from 0 to 9 and echo the results.
 
 ![alt text](img/calculation.png)
-![alt text](img/sum.png)
 ![alt text](img/sumcode.png)
+![alt text](img/sum.png)
+
+I moved on to setting up the directory structure. In `/home/ubuntu/Documents`, I created five empty files and created a folder called `testfolder` that contained five more files. This part wasn't hard since I had accumulated the knowledge and confidence from the previous activities in the module. 
+
 ![alt text](img/touchfiles.png)
+
+Then I began building the backup script called `testscript.sh` using `nano`. The goal for this part of the lab was to archive the files into a zip file and timepstamp it. I started by defining a variable called `now` with the current date using `now=$(date+"%d_%m_%y")`. I immediately ran into an error where the date command was 'not found'. After troubleshooting, I realised the issue was because I had forgotten to put a space between `date` and the `+` sign. It was a small but critical syntax issue that had caused the failure. 
+
 ![alt text](img/backupcode.png)
 ![alt text](img/backuperror.png)
 ![alt text](img/backuperror2.png)
+
+Once I had fixed that, I tested the script once more and saw that `.zip` file was created. But when I when to check it, it was empty. I also noticed in the terminal that it wasn't adding any files into the zip file. It was a confusing issue that I had to ask Mr. Yatim for help. He pointed out that it was because I was using `/home/ubuntu/Documents/*` instead of `/home/ubuntu/Documents/.`. Again, such a small syntax error caused another failure that would have been a big issue if it wasn't caught.
+
 ![alt text](img/backuperror3.png)
 ![alt text](img/backupsuccess.png)
+
+I also faced an issure with the `zip` command itself. This was because I hadn't installed it onto my VM. I had falsely assumed that it was there. After running `sudo apt installed zip`, the script was finally able to compress the folder correctly.
+
 ![alt text](img/zipissue.png)
 ![alt text](img/backupsuccess2.png)
 ![alt text](img/backupsuccesscode2.png)
-![alt text](img/cron1min.png)
+
+After that, I took my time to enhance the script by adding more variables such as `SRC`, `DEST`, `ZIPFILE` and `FINAL_ZIP`. I did this so that the code could be scalable in the event that I needed to change the source folder or backup location. It would make it easier for me to change one thing than to go through the code and change every instance of it.
+
 ![alt text](img/codevariablesenhancement.png)
+
+I then made the script globally accessible by moving it to `/usr/bin` and tested it using just `testscript` from anywhere in the terminal. I then set up a cron job using `sudo crontab -e` to run the script every hour. For testing purposes, I had scheduled it to run every minute just to make sure that the automation was working correctly.
+
+![alt text](img/cron1min.png)
+
+The next step was to export the backup to a remote cloud server using `scp`. I had to first `scp` the `webserver-key.pem` file from my local into the VM. Once I had that, I connected into my EC2 instance to backup the file into it. I tested it and it was successful. 
+
 ![alt text](img/backupincloud.png)
+
+The most frustrating challenge was gettign the backup script to run after reboot. Every time I rebooted my VM, it would reset everything and delete my files and scripts. I eventually realized it was because I hadn't properly installed Ubuntu on the virtual hard disk and that I was actually booting into a new live session each time I powered on my VM. After installing and configuring the VM properly and three failed attempts later, I tested the `@reboot` cron job and it finally worked as expected. 
 ![alt text](img/reboot.png)
+
+To finish up this lab, I installed figlet and neofetch to personalize the terminal. Now, every time I launched a session, there is a welcome greeting.
+
 ![alt text](img/figlet.png)
+
+Overall, this was one of the most practical labs so far. It tied everything together from scripting, automation, system config and networking in a way that made me feel more in control and confident in working on a Linux environment. It hadn't been a smooth journey but with every roadblock, it taught me something that I would definitely use again in the future. In fact, I had started using `scp` a lot in my workplace when I have to transfer files between my local and my VM.
